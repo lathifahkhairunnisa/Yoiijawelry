@@ -53,3 +53,12 @@ Upload semua file di folder ini ke repository GitHub kamu, lalu aktifkan GitHub 
 - Password admin hanya ada di Script Properties Apps Script.
 - Tidak ada di file HTML/JS yang di-deploy ke GitHub.
 - Token admin sementara disimpan di localStorage browser setelah login.
+
+## File SEO yang ditambahkan
+- robots.txt
+- sitemap.xml
+- site.webmanifest
+- og-image.jpg (gambar untuk Open Graph / social sharing)
+- Meta tags lengkap (Open Graph, Twitter Card, JSON-LD, canonical) di index.html dan panduan.html
+
+Setelah deploy, submit sitemap ke Google Search Console.
