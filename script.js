@@ -14,8 +14,11 @@ const FALLBACK_PRODUCTS = [
 
 let products = [];
 let cart = JSON.parse(localStorage.getItem("yoii_cart") || "[]");
+let wishlist = JSON.parse(localStorage.getItem("yoii_wishlist") || "[]");
 let waNumber = "625979228683";
 let adminToken = localStorage.getItem("yoii_admin_token") || "";
+let currentFilter = "all";
+let currentSort = "default";
 
 const money = n => "Rp" + Number(n).toLocaleString("id-ID");
 const waLink = t => `https://wa.me/${waNumber}?text=${encodeURIComponent(t)}`;
@@ -65,15 +68,23 @@ async function loadProducts() {
 }
 
 function renderProducts(list) {
-  const data = list || products;
+  let data = list || products;
+  // apply current filter if no list passed
+  if (!list) {
+    data = currentFilter === "all" ? products : products.filter(p => p.cat === currentFilter);
+  }
+  // apply sort
+  data = sortProducts(data, currentSort);
   const grid = document.querySelector("#productGrid");
   if (!grid) return;
   grid.innerHTML = data.length ? data.map(p => {
     const out = p.stock <= 0;
+    const wished = wishlist.includes(p.id);
     return `<article class="product">
       <div class="product-img">
         <img src="${p.img}" alt="${p.name}" loading="lazy">
         ${p.badge ? `<span class="badge${out ? " out" : ""}">${out ? "HABIS" : p.badge}</span>` : ""}
+        <button class="wish-btn ${wished ? "active" : ""}" onclick="toggleWish(${p.id})" aria-label="Wishlist">${wished ? "♥" : "♡"}</button>
       </div>
       <div class="product-info">
         <h3>${p.name}</h3><p>${p.cat}</p>
@@ -86,7 +97,46 @@ function renderProducts(list) {
   }).join("") : "<p style='grid-column:1/-1;color:var(--muted)'>Belum ada produk.</p>";
 }
 
+function sortProducts(arr, sort) {
+  const copy = [...arr];
+  if (sort === "price-asc") return copy.sort((a,b) => a.price - b.price);
+  if (sort === "price-desc") return copy.sort((a,b) => b.price - a.price);
+  if (sort === "newest") return copy.sort((a,b) => b.id - a.id);
+  if (sort === "stock") return copy.sort((a,b) => b.stock - a.stock);
+  return copy;
+}
+
 function saveCart() { localStorage.setItem("yoii_cart", JSON.stringify(cart)); }
+function saveWishlist() { localStorage.setItem("yoii_wishlist", JSON.stringify(wishlist)); }
+
+window.toggleWish = id => {
+  if (wishlist.includes(id)) wishlist = wishlist.filter(x => x !== id);
+  else wishlist.push(id);
+  saveWishlist();
+  renderProducts();
+  renderWishlist();
+};
+
+function renderWishlist() {
+  const el = document.querySelector("#wishlistItems");
+  const countEl = document.querySelector("#wishCount");
+  if (countEl) countEl.textContent = wishlist.length;
+  if (!el) return;
+  if (!wishlist.length) {
+    el.innerHTML = "<p style='color:var(--muted);padding:20px 0'>Wishlist masih kosong ♡</p>";
+    return;
+  }
+  const items = wishlist.map(id => products.find(p => p.id === id)).filter(Boolean);
+  el.innerHTML = items.map(p => `
+    <div class="cart-item">
+      <div><b>${p.name}</b><br><small>${money(p.price)}</small></div>
+      <div style="display:flex;gap:6px">
+        <button onclick="addCart(${p.id});toggleWish(${p.id})" style="padding:6px 10px;border-radius:8px;border:0;background:var(--butter);cursor:pointer">+</button>
+        <button onclick="toggleWish(${p.id})" style="padding:6px 10px;border-radius:8px;border:0;background:#fde8e8;cursor:pointer">✕</button>
+      </div>
+    </div>
+  `).join("");
+}
 window.addCart = id => {
   const p = products.find(x => x.id === id);
   if (!p || p.stock <= 0) return;
@@ -169,9 +219,27 @@ document.querySelectorAll("[data-filter]").forEach(b => {
   b.onclick = () => {
     document.querySelectorAll("[data-filter]").forEach(x => x.classList.remove("active"));
     b.classList.add("active");
-    const f = b.dataset.filter;
-    renderProducts(f === "all" ? products : products.filter(p => p.cat === f));
+    currentFilter = b.dataset.filter;
+    renderProducts();
   };
+});
+
+const sortSelect = document.querySelector("#sortSelect");
+if (sortSelect) {
+  sortSelect.onchange = () => {
+    currentSort = sortSelect.value;
+    renderProducts();
+  };
+}
+
+/* Wishlist panel */
+document.querySelector("#wishlistBtn")?.addEventListener("click", () => {
+  document.querySelector("#wishlistPanel")?.classList.add("open");
+  document.querySelector("#shade")?.classList.add("open");
+});
+document.querySelector("#closeWishlist")?.addEventListener("click", () => {
+  document.querySelector("#wishlistPanel")?.classList.remove("open");
+  document.querySelector("#shade")?.classList.remove("open");
 });
 
 /* Slider */
@@ -354,5 +422,6 @@ window.saveSettings = async () => {
 
 /* Init */
 renderCart();
+renderWishlist();
 loadProducts();
 updateWaLinks();

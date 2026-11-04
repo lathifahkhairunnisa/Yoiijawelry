@@ -61,6 +61,26 @@ button,select,input,textarea{font:inherit}
 .product-img img{width:100%;height:100%;object-fit:cover}
 .badge{position:absolute;top:12px;left:12px;background:var(--ink);color:#fff;font-size:10px;font-weight:700;padding:5px 10px;border-radius:99px}
 .badge.out{background:#b42318}
+.wish-btn{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.9);font-size:16px;cursor:pointer;display:grid;place-items:center}
+.wish-btn.active{background:#fde8e8;color:#b42318}
+
+.ig-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.ig-item{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:1}
+.ig-item img{width:100%;height:100%;object-fit:cover}
+.ig-item span{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#0008);color:#fff;font-size:12px;padding:20px 10px 8px;text-align:center}
+
+.blog-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.blog-card{display:flex;flex-direction:column;background:#fff;border-radius:18px;overflow:hidden;border:1px solid var(--line);transition:.2s}
+.blog-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.06)}
+.blog-card img{height:180px;object-fit:cover;width:100%}
+.blog-card div{padding:16px}
+.blog-card h3{font-size:16px;margin-bottom:6px}
+.blog-card p{font-size:13px;color:var(--muted)}
+
+@media(max-width:900px){
+  .ig-grid{grid-template-columns:repeat(2,1fr)}
+  .blog-preview-grid{grid-template-columns:1fr}
+}
 .product-info{padding:16px}
 .product-info h3{font-size:15px;font-weight:600}
 .product-info p{font-size:12px;color:var(--muted);margin:4px 0 12px}
@@ -111,7 +131,34 @@ footer p{color:var(--muted);font-size:12px}
 .admin-table th,.admin-table td{border:1px solid var(--line);padding:8px;text-align:left}
 .admin-table th{background:var(--blue2)}
 .admin-table button{padding:4px 10px;border-radius:6px;border:0;background:var(--butter2);cursor:pointer;margin:0 2px}
-.admin-form{display:grid;gap:10px;margin-bottom:16px;padding:12px;background:var(--blue2);border-radius:12px}
+.guide{max-width:800px;margin:0 auto;padding:60px 5vw 80px}
+.guide-hero{text-align:center;margin-bottom:40px}
+.guide-hero h1{font-family:"Playfair Display",serif;font-size:clamp(32px,5vw,48px);margin:12px 0}
+.guide-hero p{color:var(--muted);max-width:480px;margin:0 auto}
+
+.faq-list{display:flex;flex-direction:column;gap:12px;margin-bottom:40px}
+.faq-item{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.faq-item summary{padding:18px 22px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:"＋";font-size:18px;color:var(--blue);transition:.2s}
+.faq-item[open] summary::after{content:"－"}
+.faq-body{padding:0 22px 20px;color:var(--muted);font-size:15px}
+.faq-body ul{margin:10px 0 10px 20px}
+.faq-body li{margin:6px 0}
+
+.faq-cta{text-align:center;padding:30px;background:var(--blue2);border-radius:22px}
+.faq-cta p{margin-bottom:16px;font-weight:500}
+.faq-cta .btn{margin:0 6px}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;margin-bottom:20px}
+.card h2{font-family:"Playfair Display",serif;margin-bottom:12px}
+.card ul{margin-left:20px}
+.card li{margin:6px 0}
+
+@media(max-width:600px){
+  .guide{padding:40px 6vw 60px}
+  .faq-cta .btn{display:block;margin:8px 0}
+}
 
 @media(max-width:900px){
   .nav{display:none;position:absolute;top:76px;left:0;right:0;background:#fff;padding:25px;flex-direction:column;border-bottom:1px solid var(--line)}
